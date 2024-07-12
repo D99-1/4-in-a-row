@@ -17,15 +17,58 @@ function createBoard() {
     }
   }
 }
+function checkWin() {
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS - 3; col++) {
+      if (board[row][col] !== 0 && board[row][col] === board[row][col + 1] && board[row][col] === board[row][col + 2] && board[row][col] === board[row][col + 3]) {
+        return true;
+      }
+    }
+  }
+
+  for (let col = 0; col < COLS; col++) {
+    for (let row = 0; row < ROWS - 3; row++) {
+      if (board[row][col] !== 0 && board[row][col] === board[row + 1][col] && board[row][col] === board[row + 2][col] && board[row][col] === board[row + 3][col]) {
+        return true;
+      }
+    }
+  }
+
+  for (let row = 0; row < ROWS - 3; row++) {
+    for (let col = 0; col < COLS - 3; col++) {
+      if (board[row][col] !== 0 && board[row][col] === board[row + 1][col + 1] && board[row][col] === board[row + 2][col + 2] && board[row][col] === board[row + 3][col + 3]) {
+        return true;
+      }
+    }
+    for (let col = 3; col < COLS; col++) {
+      if (board[row][col] !== 0 && board[row][col] === board[row + 1][col - 1] && board[row][col] === board[row + 2][col - 2] && board[row][col] === board[row + 3][col - 3]) {
+        return true;
+      }
+    }
+  }
+
+  if (board.every(row => row.every(cell => cell !== 0))) {
+    alert("It's a draw!");
+    return false;
+  }
+
+  return false;
+}
 
 function handleMove(col) {
   let row = dropPiece(col);
-  if (row === -1) return; 
+  if (row === -1) return;
 
   board[row][col] = currentPlayer;
   const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
   cell.classList.add(currentPlayer === 1 ? 'player1' : 'player2');
-  currentPlayer = currentPlayer === 1 ? 2 : 1; 
+
+  if (checkWin()) {
+    alert(`Player ${currentPlayer} wins!`);
+    // Optionally, reset the game or disable further moves.
+  } else {
+    currentPlayer = currentPlayer === 1 ? 2 : 1;
+  }
 }
 
 function dropPiece(col) {
